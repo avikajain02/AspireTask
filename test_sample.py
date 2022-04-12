@@ -13,14 +13,17 @@ from Pages.locators import Locator
 def test_sample_todo_app():
     driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()))
 
+    # launch the browser
     driver.get("https://aspireapp.odoo.com/web/login")
     driver.maximize_window()
 
+    # login into the application
     driver.find_element(by=By.XPATH, value="//*[@name='login']").send_keys('user@aspireapp.com')
     driver.find_element(by=By.XPATH, value="//*[@name='password']").send_keys('@sp1r3app')
-
     driver.find_element(by=By.XPATH, value="//*[@type='submit']").click()
     driver.implicitly_wait(10)
+    
+    # go to inventory page
     driver.find_element(by=By.XPATH, value="//a[.='Inventory']").click()
     driver.find_element(by=By.XPATH, value="//span[.='Products']").click()
     driver.find_element(by=By.XPATH, value="//a[.='Products']").click()
@@ -30,8 +33,10 @@ def test_sample_todo_app():
     pro_name = 'qwerty24'
     pro_quantity = 12
 
+    # create a new product
     driver.find_element(by=By.XPATH, value="//input[@placeholder='e.g. Cheese Burger']").send_keys(pro_name)
 
+    # update the quantity of the product created
     driver.find_element(by=By.XPATH, value="//*[contains(text(),'Update Quantity')]").click()
 
     try:
@@ -49,13 +54,18 @@ def test_sample_todo_app():
     driver.find_element(by=By.XPATH, value="//input[contains(@placeholder,'Search...')]").send_keys(pro_name + '\n')
     driver.implicitly_wait(10)
     new_product = driver.find_elements(by=By.XPATH, value="//strong/span[contains(text(), " + pro_name + ")]")
+    
+    # validate that the product has been created successfully
     if new_product:
         print('product created successfully')
     else:
         pass
 
+    # go to manufacturing page
     driver.find_element(by=By.XPATH, value="//a[@title='Home menu']").click()
     driver.find_element(by=By.XPATH, value="//div[.='Manufacturing']").click()
+    
+    # create new manufacturing order
     driver.find_element(by=By.XPATH, value="//*[contains(text(),'Create')]").click()
 
     driver.find_element(by=By.XPATH,
@@ -78,6 +88,8 @@ def test_sample_todo_app():
 
     driver.find_element(by=By.XPATH, value="//span[.='Confirm']").click()
     driver.implicitly_wait(10)
+    
+    # mark the state of the order as done
     driver.find_element(by=By.XPATH, value="//button[@confirm]/span[.='Mark as Done']").click()
 
     driver.implicitly_wait(10)
@@ -90,6 +102,8 @@ def test_sample_todo_app():
 
     driver.find_element(by=By.XPATH, value="// a[.='Manufacturing Orders']").click()
     sleep(2)
+    
+    # search for the manufacturing order
     driver.find_element(by=By.XPATH, value="//input[contains(@placeholder,'Search...')]").send_keys(Keys.BACK_SPACE * 2)
     driver.find_element(by=By.XPATH, value="//input[contains(@placeholder,'Search...')]").send_keys(
         manufacturing_order + '\n')
@@ -97,6 +111,7 @@ def test_sample_todo_app():
     quantity = float(driver.find_element(by=By.XPATH, value="//td[@name='product_qty']").text)
     state = driver.find_element(by=By.XPATH, value="//span[@name='state']").text
 
+    # check if the order has been created with correct data (here quantity and state of the order)
     if quantity > 10 and state == 'Done':
         print('manufacturing order is correctly placed')
 
